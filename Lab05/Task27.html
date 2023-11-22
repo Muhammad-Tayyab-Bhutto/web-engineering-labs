@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo App</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo App</h1>
+    <form id="todoForm">
+        <input type="text" id="todoInput" placeholder="Add a new todo" required>
+        <button type="submit">Add Todo</button>
+    </form>
+    <ul id="todoList"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const todoForm = document.getElementById('todoForm');
+            const todoInput = document.getElementById('todoInput');
+            const todoList = document.getElementById('todoList');
+
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+            todos.forEach(todo => addTodoToDOM(todo));
+
+            todoForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const todoText = todoInput.value.trim();
+                if (todoText !== '') {
+                    const todo = { text: todoText, completed: false };
+                    todos.push(todo);
+                    addTodoToDOM(todo);
+                    updateLocalStorage();
+                    todoInput.value = '';
+                }
+            });
+
+            function addTodoToDOM(todo) {
+                const todoItem = document.createElement('li');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+                const todoText = document.createElement('span');
+                todoText.textContent = todo.text;
+
+                checkbox.addEventListener('change', function () {
+                    todo.completed = !todo.completed;
+                    updateLocalStorage();
+                    updateTodoStyle(todoItem, todo);
+                });
+
+               todoItem.addEventListener('contextmenu', function (event) {
+                    event.preventDefault();
+                    const index = todos.indexOf(todo);
+                    if (index !== -1) {
+                        todos.splice(index, 1);
+                        updateLocalStorage();
+                        todoItem.remove();
+                    }
+                });
+
+                todoItem.appendChild(checkbox);
+                todoItem.appendChild(todoText);
+                updateTodoStyle(todoItem, todo);
+                todoList.appendChild(todoItem);
+            }
+
+            function updateTodoStyle(todoItem, todo) {
+                if (todo.completed) {
+                    todoItem.classList.add('completed');
+                } else {
+                    todoItem.classList.remove('completed');
+                }
+            }
+
+            function updateLocalStorage() {
+                localStorage.setItem('todos', JSON.stringify(todos));
+            }
+        });
+    </script>
+</body>
+</html>

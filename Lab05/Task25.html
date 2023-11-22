@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <div class="header"></div>
+    <section id="container">
+        <ul>
+            <li class="first">one</li>
+            <li class="second">two</li>
+            <li class="third">three</li>
+        </ul>
+        <ol>
+            <li class="first">one</li>
+            <li class="second">two</li>
+            <li class="third">three</li>
+        </ol>
+    </section>
+    <div class="footer"></div>
+
+    <script>
+        let containerWithoutQuerySelector = document.getElementById("container");
+        let containerWithQuerySelector = document.querySelector("#container");
+        let secondListItems = document.querySelectorAll(".second");
+        
+        let thirdListItemInOl = document.querySelector("ol .third");
+        containerWithoutQuerySelector.textContent = "Hello!";
+        
+        let footerDiv = document.querySelector(".footer");
+        footerDiv.classList.add("main");
+        footerDiv.classList.remove("main");
+        
+        let newLi = document.createElement("li");
+        
+        newLi.textContent = "four";
+        
+        let ulElement = document.querySelector("ul");
+        ulElement.appendChild(newLi);
+        
+        let olListItems = document.querySelectorAll("ol li");
+        olListItems.forEach(function (li) {
+            li.style.backgroundColor = "green";
+        });
+        
+        let footerToRemove = document.querySelector(".footer");
+        footerToRemove.parentNode.removeChild(footerToRemove);
+    </script>
+</body>
+</html>

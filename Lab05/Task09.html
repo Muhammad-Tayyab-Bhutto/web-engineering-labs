@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <title>Todo By Muhammad Tayyab</title>
+  </head>
+  <body class="container">
+    <h1 class="d-flex justify-content-center">TODO LIST</h1>
+    <form
+      id="todo-form"
+      class="d-flex flex-direction-column justify-content-center gap-3 align-items-center"
+    >
+      <div class="mb-3">
+        <label class="form-label">Add To List</label>
+        <input type="text" class="form-control" id="add-now" />
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Add Now</button>
+    </form>
+    <ul id="todo-list" class="list-group"></ul>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const todoForm = document.getElementById("todo-form");
+        const todoInput = document.getElementById("add-now");
+        const todoList = document.getElementById("todo-list");
+
+        const todos = JSON.parse(localStorage.getItem("todos")) || [];
+        let counter = 1; 
+
+        function saveTodos() {
+          localStorage.setItem("todos", JSON.stringify(todos));
+        }
+
+        function createTodo(todoText) {
+          const todo = {
+            text: todoText,
+            completed: false,
+          };
+          todos.push(todo);
+          saveTodos();
+          return todo;
+        }
+
+        function displayTodos() {
+          todoList.innerHTML = "";
+          todos.forEach((todo, index) => {
+            const li = document.createElement("li");
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.innerHTML = `
+              <span>${todo.completed? `<s>${todo.text}</s>`: `<span>${todo.text}</span>`}</span>
+              <button class="btn btn-primary " data-index="${index}">${todo.completed ? "completed" : ""}${todo.completed? "": "Mark As Completed"}</button>
+            `;
+            li.addEventListener("click", function () {
+              todo.completed = !todo.completed;
+              saveTodos();
+              displayTodos();
+            });
+            todoList.appendChild(li);
+          });
+        }
+
+        todoForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const todoText = todoInput.value.trim();
+          if (todoText) {
+            createTodo(todoText);
+            todoInput.value = "";
+            displayTodos();
+            counter++;
+          }
+        });
+
+        todoList.addEventListener("click", function (e) {
+          if (e.target.classList.contains("delete")) {
+            const index = e.target.getAttribute("data-index");
+            todos.splice(index, 1);
+            saveTodos();
+            displayTodos();
+          }
+        });
+
+        displayTodos();
+      });
+    </script>
+  </body>
+</html>
